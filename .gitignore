@@ -1,4 +1,2 @@
-/build/
-/dist/
-/nbproject/private/
-.DS_Store
+/out
+/target

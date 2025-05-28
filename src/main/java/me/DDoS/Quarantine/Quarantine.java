@@ -47,11 +47,7 @@ import me.DDoS.Quarantine.util.Messages;
 
 import net.milkbowl.vault.economy.Economy;
 
-/**
- *
- * @author DDoS
- */
-public class Quarantine extends JavaPlugin {
+public final class Quarantine extends JavaPlugin {
 
     public static final Logger log = Logger.getLogger("Minecraft");
     //
@@ -122,9 +118,9 @@ public class Quarantine extends JavaPlugin {
         loadStartUpZones();
 
         startMetrics();
-		
-		Messages.load(this);
-		
+
+        Messages.load(this);
+
         log.info("[Quarantine] Plugin enabled. v" + getDescription().getVersion() + ", by DDoS");
 
     }
