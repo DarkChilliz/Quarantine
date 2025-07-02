@@ -563,7 +563,7 @@ public final class Quarantine extends JavaPlugin {
 
             log.info("[Quarantine] Downloading 'jedis-2.0.0.jar' library.");
 
-            if (downloadFile("http://dl.dropbox.com/u/43006973/jedis-2.0.0.jar", jedisFile)) {
+            if (downloadFile("https://repo1.maven.org/maven2/redis/clients/jedis/2.0.0/jedis-2.0.0.jar", jedisFile)) {
 
                 log.info("[Quarantine] Downloading done.");
 
