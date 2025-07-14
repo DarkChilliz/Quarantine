@@ -16,7 +16,6 @@ import org.bukkit.entity.EntityType;
 import me.DDoS.Quarantine.Quarantine;
 import me.DDoS.Quarantine.player.inventory.Kit;
 import me.DDoS.Quarantine.zone.region.provider.RegionProvider;
-import me.DDoS.Quarantine.zone.region.provider.ResidenceRegionProvider;
 import me.DDoS.Quarantine.zone.subzone.SubZoneData;
 import me.DDoS.Quarantine.zone.subzone.SubZone;
 import me.DDoS.Quarantine.zone.region.Region;
@@ -182,15 +181,7 @@ public class ZoneLoader {
 
             SpawnRegion spawnRegion;
 
-            if (provider instanceof ResidenceRegionProvider) {
-
-                spawnRegion = provider.getSpawnRegion(world, zoneName + ":" + subZoneName);
-
-            } else {
-
-                spawnRegion = provider.getSpawnRegion(world, subZoneName);
-
-            }
+            spawnRegion = provider.getSpawnRegion(world, subZoneName);
 
             if (spawnRegion != null) {
 

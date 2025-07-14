@@ -4,11 +4,13 @@ import me.DDoS.Quarantine.player.inventory.Kit;
 import me.DDoS.Quarantine.util.Messages;
 import me.DDoS.Quarantine.util.QUtil;
 import me.DDoS.Quarantine.zone.Zone;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
+
+import java.util.Arrays;
 
 /**
  *
@@ -24,27 +26,18 @@ public class LobbyPlayer extends QPlayer {
 
     }
 
-    private boolean areInvContentsEmpty(ItemStack[] contents, ItemStack[] armor) {
+    private boolean isEmpty(ItemStack item) {
+        return item == null || item.getType().isAir();
+    }
 
-        for (ItemStack content : contents) {
+    private boolean areInvContentsEmpty() {
+        PlayerInventory inv = player.getInventory();
 
-            if (content != null) {
-
-                return false;
-
-            }
-        }
-
-        for (ItemStack armorPiece : armor) {
-
-            if (armorPiece.getType() != Material.AIR) {
-
-                return false;
-
-            }
-        }
-
-        return true;
+        return isEmpty(inv.getHelmet()) &&
+                isEmpty(inv.getChestplate()) &&
+                isEmpty(inv.getLeggings()) &&
+                isEmpty(inv.getBoots()) &&
+                Arrays.stream(inv.getContents()).allMatch(this::isEmpty);
     }
 
     @Override
@@ -64,8 +57,7 @@ public class LobbyPlayer extends QPlayer {
 
         }
 
-        if (!areInvContentsEmpty(player.getInventory().getContents(),
-                player.getInventory().getArmorContents())) {
+        if (!areInvContentsEmpty()) {
 
             QUtil.tell(player, Messages.get("InventoryNotEmpty"));
             return false;

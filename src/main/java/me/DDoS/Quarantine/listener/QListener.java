@@ -185,7 +185,7 @@ public class QListener implements Listener {
 
         if (combuster instanceof Projectile) {
 
-            LivingEntity shooter = ((Projectile) combuster).getShooter();
+            LivingEntity shooter = (LivingEntity) ((Projectile) combuster).getShooter();
 
             if (shooter instanceof Player) {
 

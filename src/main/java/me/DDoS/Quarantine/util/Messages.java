@@ -1,12 +1,9 @@
 package me.DDoS.Quarantine.util;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.logging.Logger;
 import me.DDoS.Quarantine.Quarantine;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -23,67 +20,37 @@ public class Messages {
 	public static void load(Quarantine plugin) {
 
 		final FileConfiguration config = new YamlConfiguration();
-		final InputStream input;
 		final File messageConfig = new File("plugins/Quarantine/messages.yml");
 
-		if (messageConfig.exists()) {
-
-			InputStream is;
-
-			try {
-
-				is = new FileInputStream("plugins/Quarantine/messages.yml");
-
-			} catch (Exception ex) {
-
-				Logger.getLogger("[Quarantine] Couldn't load the message config. Using defaults from jar.");
-				is = plugin.getResource("messages.yml");
-
-			}
-
-			input = is;
-
-		} else {
-
+		if (!messageConfig.exists()) {
 			Quarantine.log.info("[Quarantine] Couldn't find the message config. Using defaults from jar.");
-			input = plugin.getResource("messages.yml");
-
+			// Save the default messages.yml from the jar to disk
+			plugin.saveResource("messages.yml", false);
 		}
 
 		try {
-
-			config.load(input);
-
+			config.load(messageConfig); // <-- FIXED LINE
 		} catch (Exception ex) {
-
 			Quarantine.log.info("[Quarantine] Couldn't load the message config: " + ex.getMessage());
-
+			return;
 		}
 
 		for (String key : config.getKeys(false)) {
-
 			messages.put(key, config.getString(key, ""));
-
 		}
 
 		for (Entry<String, String> entry : messages.entrySet()) {
-
 			final String[] splits = entry.getValue().split("\\Q%\\E");
 
 			for (int i = 0; i < splits.length; i++) {
-
 				for (ChatColor color : ChatColor.values()) {
-
-					if (splits[i].equals(color.name())) {
-
+					if (splits[i].equalsIgnoreCase(color.name())) {
 						splits[i] = color.toString();
-
 					}
 				}
 			}
 
 			entry.setValue(QUtil.join(splits));
-
 		}
 	}
 

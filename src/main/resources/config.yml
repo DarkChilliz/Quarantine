@@ -49,26 +49,29 @@ Zones:
     starting_money: 35
     kits:
       player:
-        - '298-1'
-        - '299-1'
-        - '300-1'
-        - '301-1'
-        - '272-1'
-        - '297-3'
+      - 'LEATHER_HELMET-1'
+      - 'LEATHER_CHESTPLATE-1'
+      - 'LEATHER_LEGGINGS-1'
+      - 'LEATHER_BOOTS-1'
+      - 'STONE_SWORD-1'
+      - 'BREAD-3'
+
       donator:
-        - '306-1'
-        - '307-1'
-        - '308-1'
-        - '309-1'
-        - '267-1|16-2'
-        - '364-3'
+      - 'IRON_HELMET-1'
+      - 'IRON_CHESTPLATE-1'
+      - 'IRON_LEGGINGS-1'
+      - 'IRON_BOOTS-1'
+      - 'IRON_SWORD-1|sharpness-1'
+      - 'COOKED_BEEF-3'
+
       admin:
-        - '310-1'
-        - '311-1'
-        - '312-1'
-        - '313-1'
-        - '276-1|17-5|16-5'
-        - '322-3'
+      - 'DIAMOND_HELMET-1|protection-2'
+      - 'DIAMOND_CHESTPLATE-1|protection-2'
+      - 'DIAMOND_LEGGINGS-1|protection-2'
+      - 'DIAMOND_BOOTS-1|protection-2'
+      - 'DIAMOND_SWORD-1|sharpness-3|unbreaking-2'
+      - 'GOLDEN_APPLE-3'
+
     money_rewards:
       - 'Zombie:10-15-5'
       - 'Skeleton:15-20-6'

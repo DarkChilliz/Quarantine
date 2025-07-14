@@ -52,7 +52,7 @@ public class PlayerData {
 
 		this.player = player;
 		this.zone = zone;
-		this.preGameHealth = player.getHealth();
+		this.preGameHealth = (int) player.getHealth();
 		this.preGameFoodLevel = player.getFoodLevel();
 
 	}
@@ -197,7 +197,7 @@ public class PlayerData {
 
 		}
 
-		health = player.getHealth();
+		health = (int) player.getHealth();
 		foodLevel = player.getFoodLevel();
 
 		config.set("money", money);

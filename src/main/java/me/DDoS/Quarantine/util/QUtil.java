@@ -1,336 +1,118 @@
 package me.DDoS.Quarantine.util;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-/**
- *
- * @author DDoS
- */
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 public class QUtil {
 
 	public static void tell(Player player, String msg) {
-
-		if (!msg.equals("")) {
-
+		if (!msg.isEmpty()) {
 			player.sendMessage(Messages.get("MessageHeader") + msg);
-
 		}
 	}
 
 	public static boolean checkForSign(Block block) {
-
-		switch (block.getType()) {
-
-			case WALL_SIGN:
-				return true;
-
-			case SIGN_POST:
-				return true;
-
-			default:
-				return false;
-
-		}
+		BlockState state = block.getState();
+		return state instanceof Sign;
 	}
 
-	public static String toString(Collection objects) {
-
-		String string = "";
-
-		for (Object object : objects) {
-
-			string = string + object.toString() + ", ";
-
+	public static String toString(Collection<?> objects) {
+		StringBuilder sb = new StringBuilder();
+		for (Object obj : objects) {
+			sb.append(obj).append(", ");
 		}
-
-		try {
-
-			string = string.substring(0, string.length() - 2);
-
-		} catch (StringIndexOutOfBoundsException sioobe) {
-
-			return "";
-
+		if (sb.length() >= 2) {
+			sb.setLength(sb.length() - 2);
 		}
-
-		return string;
-
+		return sb.toString();
 	}
 
 	public static ItemStack toItemStack(String string, int amount) {
-
-		String[] splits = string.split(":");
-
-		ItemStack item = null;
-
+		String[] parts = string.split(":");
 		try {
+			Material mat = Material.matchMaterial(parts[0]);
+			if (mat == null || mat.isAir()) return null;
 
-			int ID = Integer.parseInt(splits[0]);
-
-			if (ID == 0 || Material.getMaterial(ID) == null) {
-
-				return item;
-
-			}
-
-			item = new ItemStack(ID, amount, splits.length > 1 ? Short.parseShort(splits[1]) : (short) 0);
-
-		} catch (NumberFormatException nfe) {
+			ItemStack item = new ItemStack(mat, amount);
+			// Optionally handle damage/data values here if needed (1.12 or older)
+			return item;
+		} catch (Exception e) {
+			return null;
 		}
-
-		return item;
-
 	}
 
 	public static List<ItemStack> parseItemList(String[] lines, int amount) {
-
-		final List<ItemStack> items = new ArrayList<ItemStack>();
-
+		List<ItemStack> items = new ArrayList<>();
 		for (String line : lines) {
-
 			String[] splits = line.split("-");
-
 			for (String split : splits) {
-
-				try {
-
-					ItemStack item = toItemStack(split, amount);
-
-					if (item != null) {
-
-						items.add(item);
-
-					}
-
-				} catch (NumberFormatException nfe) {
-
-					continue;
-
+				ItemStack item = toItemStack(split, amount);
+				if (item != null) {
+					items.add(item);
 				}
 			}
 		}
-
 		return items;
-
 	}
 
 	public static String join(String[] strings) {
-
-		String string = "";
-
-		for (String s : strings) {
-
-			string += s;
-
-		}
-
-		return string;
-
+		StringBuilder sb = new StringBuilder();
+		for (String s : strings) sb.append(s);
+		return sb.toString();
 	}
 
 	public static boolean acceptsMobs(Block block) {
-
 		Material mat = block.getType();
-
 		switch (mat) {
-			case HUGE_MUSHROOM_1:
-				return true;
-
-			case HUGE_MUSHROOM_2:
-				return true;
-
-			case ENDER_PORTAL_FRAME:
-				return true;
-
-			case ENDER_STONE:
-				return true;
-
-			case PUMPKIN:
-				return true;
-
-			case MYCEL:
-				return true;
-
-			case NETHER_BRICK:
-				return true;
-
-			case NETHER_BRICK_STAIRS:
-				return true;
-
-			case BEDROCK:
-				return true;
-
-			case BOOKSHELF:
-				return true;
-
-			case BRICK:
-				return true;
-
-			case BRICK_STAIRS:
-				return true;
-
-			case BURNING_FURNACE:
-				return true;
-
-			case CHEST:
-				return true;
-
-			case CLAY:
-				return true;
-
-			case COAL_ORE:
-				return true;
-
-			case COBBLESTONE:
-				return true;
-
-			case COBBLESTONE_STAIRS:
-				return true;
-
-			case DIAMOND_BLOCK:
-				return true;
-
-			case DIAMOND_ORE:
-				return true;
-
-			case DIRT:
-				return true;
-
-			case DISPENSER:
-				return true;
-
-			case DOUBLE_STEP:
-				return true;
-
-			case FURNACE:
-				return true;
-
-			case GLASS:
-				return true;
-
-			case GLOWSTONE:
-				return true;
-
-			case GOLD_BLOCK:
-				return true;
-
-			case GOLD_ORE:
-				return true;
-
-			case GRASS:
-				return true;
-
-			case GRAVEL:
-				return true;
-
-			case ICE:
-				return true;
-
-			case IRON_BLOCK:
-				return true;
-
-			case IRON_ORE:
-				return true;
-
-			case JACK_O_LANTERN:
-				return true;
-
-			case JUKEBOX:
-				return true;
-
-			case LAPIS_BLOCK:
-				return true;
-
-			case LAPIS_ORE:
-				return true;
-
-			case LEAVES:
-				return true;
-
-			case LOG:
-				return true;
-
-			case MELON_BLOCK:
-				return true;
-
-			case MOB_SPAWNER:
-				return true;
-
-			case MONSTER_EGGS:
-				return true;
-
-			case MOSSY_COBBLESTONE:
-				return true;
-
-			case NETHERRACK:
-				return true;
-
-			case NOTE_BLOCK:
-				return true;
-
-			case OBSIDIAN:
-				return true;
-
-			case REDSTONE_ORE:
-				return true;
-
-			case SAND:
-				return true;
-
-			case SANDSTONE:
-				return true;
-
-			case SMOOTH_BRICK:
-				return true;
-
-			case SMOOTH_STAIRS:
-				return true;
-
-			case SNOW_BLOCK:
-				return true;
-
-			case SOIL:
-				return true;
-
-			case SOUL_SAND:
-				return true;
-
-			case SPONGE:
-				return true;
-
-			case STEP:
-				return true;
-
 			case STONE:
+			case DIRT:
+			case GRASS_BLOCK:
+			case COBBLESTONE:
+			case SAND:
+			case SANDSTONE:
+			case NETHERRACK:
+			case OBSIDIAN:
+			case END_STONE:
+			case GLASS:
+			case GLOWSTONE:
+			case BRICKS:
+			case BOOKSHELF:
+			case PUMPKIN:
+			case JACK_O_LANTERN:
+			case MELON:
+			case LAPIS_BLOCK:
+			case LAPIS_ORE:
+			case COAL_ORE:
+			case IRON_ORE:
+			case GOLD_ORE:
+			case DIAMOND_ORE:
+			case REDSTONE_ORE:
+			case EMERALD_ORE:
+			case QUARTZ_BLOCK:
+			case NETHER_QUARTZ_ORE: // renamed from QUARTZ_ORE
+			case MYCELIUM:
+			case SNOW_BLOCK:
+			case ICE:
+			case PACKED_ICE:
+			case BLUE_ICE:
+			case NETHER_BRICKS:
+			case MAGMA_BLOCK:
+			case END_STONE_BRICKS: // renamed from END_BRICKS
+			case BLACKSTONE:
+			case POLISHED_BLACKSTONE:
+			case BASALT:
+			case POLISHED_BASALT:
 				return true;
-
-			case TNT:
-				return true;
-
-			case TRAP_DOOR:
-				return true;
-
-			case WOOD:
-				return true;
-
-			case WOOD_STAIRS:
-				return true;
-
-			case WOOL:
-				return true;
-
-			case WORKBENCH:
-				return true;
-
 			default:
 				return false;
-
 		}
 	}
 }

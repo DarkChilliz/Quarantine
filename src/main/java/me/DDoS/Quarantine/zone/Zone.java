@@ -41,7 +41,6 @@ import me.DDoS.Quarantine.player.LobbyPlayer;
 import me.DDoS.Quarantine.player.QPlayer;
 import me.DDoS.Quarantine.zone.subzone.SubZone;
 import me.DDoS.Quarantine.zone.region.Region;
-import me.DDoS.Quarantine.leaderboard.Leaderboard;
 import me.DDoS.Quarantine.player.PlayerType;
 import me.DDoS.Quarantine.player.inventory.Kit;
 import me.DDoS.Quarantine.util.Messages;
@@ -65,7 +64,6 @@ public class Zone {
 	private Location entrance;
 	private final Map<String, Kit> kits;
 	private final Map<EntityType, Reward> mobRewards;
-	private final Leaderboard leaderboard;
 	//
 	private final Map<String, QPlayer> players = new HashMap<String, QPlayer>();
 
@@ -80,16 +78,6 @@ public class Zone {
 		this.kits = kits;
 		this.subZones = subZones;
 		this.mobRewards = mobRewards;
-
-		if (Leaderboard.ENABLED) {
-
-			leaderboard = new Leaderboard(plugin, properties.getZoneName());
-
-		} else {
-
-			leaderboard = null;
-
-		}
 
 		mainDir = new File("plugins/Quarantine/" + properties.getZoneName());
 
@@ -143,24 +131,6 @@ public class Zone {
 	public File getPlayerInvDir() {
 
 		return playerInvDir;
-
-	}
-
-	public void disconnectLeaderboards() {
-
-		if (leaderboard == null) {
-
-			return;
-
-		}
-
-		leaderboard.disconnect();
-
-	}
-
-	public Leaderboard getLeaderboard() {
-
-		return leaderboard;
 
 	}
 
@@ -385,13 +355,10 @@ public class Zone {
 	}
 
 	public void handleChunkUnload(ChunkUnloadEvent event) {
-
-		if (!players.isEmpty()) {
-
-			event.setCancelled(true);
-
-		}
+		// Do nothing or log a warning if necessary
+		// You can't prevent chunk unloads anymore in newer Spigot versions
 	}
+
 
 	public void handlePlayerInteractButton(PlayerInteractEvent event, Player player) {
 
@@ -465,7 +432,6 @@ public class Zone {
 	}
 
 	private boolean handleZoneSign(ZonePlayer player, Sign sign) {
-
 		String line = sign.getLine(1);
 
 		if (line.equalsIgnoreCase("Buy Item")) {
@@ -475,13 +441,9 @@ public class Zone {
 			ItemStack item = QUtil.toItemStack(sa[0], Integer.parseInt(sa[1]));
 
 			if (item != null) {
-
 				player.buyItem(item, Integer.parseInt(sa[2]));
-
 			} else {
-
 				QUtil.tell(player.getPlayer(), Messages.get("InvalidItemID"));
-
 			}
 
 			return true;
@@ -491,11 +453,9 @@ public class Zone {
 			Sign sign2 = getSignNextTo(sign.getBlock());
 
 			if (sign2 != null) {
-
 				String[] splits = sign.getLine(2).split("-");
 				List<ItemStack> items = QUtil.parseItemList(sign2.getLines(), Integer.parseInt(splits[0]));
 				player.buyItem(items.get(new Random().nextInt(items.size())), Integer.parseInt(splits[1]));
-
 			}
 
 			return true;
@@ -506,9 +466,7 @@ public class Zone {
 			ItemStack item = QUtil.toItemStack(sa[0], Integer.parseInt(sa[1]));
 
 			if (item != null) {
-
 				player.sellItem(item, Integer.parseInt(sa[2]));
-
 			}
 
 			return true;
@@ -520,8 +478,27 @@ public class Zone {
 
 		} else if (line.equalsIgnoreCase("Enchantment")) {
 
+			// New format: minecraft:sharpness-5-100
 			String[] sa = sign.getLine(2).split("-");
-			player.addEnchantment(Integer.parseInt(sa[0]), Integer.parseInt(sa[1]), Integer.parseInt(sa[2]));
+
+			if (sa.length < 3) {
+				QUtil.tell(player.getPlayer(), Messages.get("InvalidSignFormat"));
+				return true;
+			}
+
+			String enchantmentKey = sa[0].toLowerCase();
+			int level;
+			int cost;
+
+			try {
+				level = Integer.parseInt(sa[1]);
+				cost = Integer.parseInt(sa[2]);
+			} catch (NumberFormatException ex) {
+				QUtil.tell(player.getPlayer(), Messages.get("InvalidSignFormat"));
+				return true;
+			}
+
+			player.addEnchantment(enchantmentKey, level, cost);
 			return true;
 
 		} else if (line.equalsIgnoreCase("Buy Kit")) {
@@ -529,21 +506,15 @@ public class Zone {
 			String kitName = sign.getLine(2);
 
 			if (!kits.containsKey(kitName)) {
-
 				QUtil.tell(player.getPlayer(), Messages.get("InvalidKitName"));
-
 			} else {
-
 				player.buyKit(kits.get(kitName), Integer.parseInt(sign.getLine(3)));
-
 			}
 
 			return true;
 
 		} else {
-
 			return false;
-
 		}
 	}
 
@@ -803,7 +774,7 @@ public class Zone {
 
 			} else if (damager instanceof Projectile) {
 
-				LivingEntity shooter = ((Projectile) damager).getShooter();
+				LivingEntity shooter = (LivingEntity) ((Projectile) damager).getShooter();
 
 				if (shooter instanceof Player) {
 
